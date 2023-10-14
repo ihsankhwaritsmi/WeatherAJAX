@@ -18,7 +18,7 @@ type WeatherData struct {
 }
 
 func main() {
-	fmt.Println("hello")
+	fmt.Println("use localhost:8000")
 	apiKey := "5df066624a2b37618a4e6f238f45c100"
 
 	h1 := func(w http.ResponseWriter, r *http.Request) {
