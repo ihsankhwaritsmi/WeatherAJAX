@@ -10,16 +10,16 @@ import (
 
 type WeatherData struct {
 	Main struct {
-		Temperature float64 `json:"temp`
-	} `json:"temp`
+		Temperature float64 `json:"temp"`
+	} `json:"main"`
 	Weather []struct {
 		Description string `json:"description"`
 	} `json:"weather"`
 }
 
 func main() {
-	fmt.Println("use localhost:8000")
-	apiKey := "5df066624a2b37618a4e6f238f45c100"
+	fmt.Println("Use localhost:8000")
+	apiKey := "772fe356640f71e1d246c7bf4fa3722f" // Replace with your actual OpenWeatherMap API key
 
 	h1 := func(w http.ResponseWriter, r *http.Request) {
 		tmpl := template.Must(template.ParseFiles("index.html"))
@@ -28,11 +28,11 @@ func main() {
 	}
 
 	h2 := func(w http.ResponseWriter, r *http.Request) {
-		//check whether an htmx was recieved or not
-		log.Print("HTMX recieved")
+		// Check whether an HTMX request was received or not
+		log.Print("HTMX received")
 		log.Print(r.Header.Get("HX-request"))
 
-		//inp == city
+		// Get the city input from the form
 		city := r.PostFormValue("inp")
 		fmt.Println(city)
 
@@ -51,16 +51,18 @@ func main() {
 			return
 		}
 
+		// Calculate temperature in Celsius
 		temp := data.Main.Temperature - 273.15
 		desc := data.Weather[0].Description
-
+		// fmt.Printf("Weather in %s: %.2f°C, %s", city, temp, desc)
+		// Construct the HTML response
 		htmlStr := fmt.Sprintf("<p id='leTarget'>Weather in %s: %.2f°C, %s</p>", city, temp, desc)
 		tmpl, _ := template.New("t").Parse(htmlStr)
 		tmpl.Execute(w, nil)
 	}
+
 	http.HandleFunc("/", h1)
 	http.HandleFunc("/show-weath/", h2)
 
 	log.Fatal(http.ListenAndServe(":8000", nil))
-
 }
